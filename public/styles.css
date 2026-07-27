@@ -1,0 +1,135 @@
+:root {
+  --background: #f6f8fa;
+  --surface: #ffffff;
+  --primary: #1b4d8a;
+  --secondary: #0f6f61;
+  --text: #1f2937;
+  --muted: #64748b;
+  --border: #e2e8f0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, sans-serif;
+  background: var(--background);
+  color: var(--text);
+}
+
+.hero {
+  background: linear-gradient(135deg, #1b4d8a 0%, #0f6f61 100%);
+  color: #ffffff;
+  padding: 3rem 1rem;
+}
+
+.container {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.hero h1 {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.hero p {
+  margin: 0;
+  max-width: 42rem;
+  line-height: 1.7;
+}
+
+.controls {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.button {
+  border: none;
+  background: #ffffff;
+  color: var(--primary);
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    filter 0.2s ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.meta {
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+}
+
+.destinations {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.25rem;
+  margin: 2rem 0 4rem;
+}
+
+.destination-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-shadow: 0 18px 45px rgba(15, 19, 28, 0.05);
+}
+
+.destination-media {
+  min-height: 200px;
+  background: linear-gradient(135deg, #e2e8f0, #f8fafc);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.destination-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.destination-info {
+  padding: 1.25rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.destination-title {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.destination-meta {
+  color: var(--secondary);
+  font-weight: 700;
+}
+
+.destination-address,
+.destination-coordinates {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.empty-state {
+  padding: 4rem 1rem;
+  text-align: center;
+  color: var(--muted);
+}

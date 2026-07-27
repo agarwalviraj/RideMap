@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bike Ride Destinations from Bengaluru</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="container">
+        <h1>Bike Ride Destinations from Bengaluru</h1>
+        <p>
+          Explore the full list of ride spots and sort by distance from
+          Bengaluru.
+        </p>
+        <div class="controls">
+          <button id="sortDistance" class="button">Sort by distance</button>
+          <span id="itemCount" class="meta"></span>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section id="destinations" class="destinations"></section>
+    </main>
+
+    <template id="destinationTemplate">
+      <article class="destination-card">
+        <div class="destination-media"></div>
+        <div class="destination-info">
+          <h2 class="destination-title"></h2>
+          <div class="destination-meta"></div>
+          <p class="destination-address"></p>
+          <div class="destination-coordinates"></div>
+        </div>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>

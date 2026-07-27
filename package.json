@@ -1,0 +1,23 @@
+{
+  "private": true,
+  "name": "ride-destinations",
+  "version": "1.0.0",
+  "description": "Bike ride destinations with Google Maps enrichment and Next.js SSR frontend.",
+  "type": "module",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "enrich": "node scripts/enrich-locations.js",
+    "frontend:dev": "npm --prefix frontend run dev",
+    "frontend:build": "npm --prefix frontend run build",
+    "frontend:start": "npm --prefix frontend run start"
+  },
+  "dependencies": {
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
