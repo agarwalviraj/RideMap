@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function DestinationCard({
   destination,
   primaryUrl,
@@ -5,17 +7,28 @@ export default function DestinationCard({
   routeUrl,
   routeLabel,
 }) {
+  const imageUrl = destination?.images?.[0];
+
   return (
     <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
+      {/* Image Display Block */}
       <div className="min-h-[200px] bg-slate-100 grid place-items-center">
-        {destination.images?.length ? (
-          <img
-            src={destination.images[0]}
+        {imageUrl && typeof imageUrl === "string" ? (
+          // Only render the image if a valid, non-empty string URL is present
+          <Image
+            src={"/" + imageUrl}
             alt={destination.name}
             className="h-full w-full object-cover"
+            width="1024"
+            height="1024"
           />
         ) : (
-          <div className="text-sm font-semibold text-slate-500">No image</div>
+          /* Fallback when no images or invalid path */
+          <div className="text-sm font-semibold text-slate-500 p-4 text-center">
+            {destination?.images?.[1]
+              ? "No primary image available"
+              : "No destination details found"}
+          </div>
         )}
       </div>
 
