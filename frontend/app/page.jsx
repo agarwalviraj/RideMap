@@ -1,11 +1,38 @@
-import fs from "fs/promises";
-import path from "path";
 import DestinationList from "../components/DestinationList";
 
+let cachedDestinations = null;
+
 async function getDestinations() {
-  const filePath = path.join(process.cwd(), "public", "data", "locations.json");
-  const content = await fs.readFile(filePath, "utf8");
-  return JSON.parse(content);
+  if (cachedDestinations) {
+    return cachedDestinations;
+  }
+
+  const privateUrl = process.env.LOCATIONS_DATA_URL;
+  if (!privateUrl) {
+    throw new Error(
+      "LOCATIONS_DATA_URL is required to fetch destination data from private storage.",
+    );
+  }
+
+  const headers = {};
+  if (process.env.LOCATIONS_DATA_TOKEN) {
+    headers.Authorization = `Bearer ${process.env.LOCATIONS_DATA_TOKEN}`;
+  }
+
+  const response = await fetch(privateUrl, {
+    method: "GET",
+    headers,
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `Failed to fetch private locations data: ${response.status} ${response.statusText}`,
+    );
+  }
+
+  cachedDestinations = await response.json();
+  return cachedDestinations;
 }
 
 export default async function Page() {
