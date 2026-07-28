@@ -1,9 +1,5 @@
 node_modules/
 .env
-public/assets/images/
-public/data/locations.json
 frontend/node_modules/
 frontend/.next/
-frontend/public/assets/images/
-frontend/public/data/locations.json
 .DS_Store
