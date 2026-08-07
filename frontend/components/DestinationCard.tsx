@@ -19,15 +19,15 @@ export default function DestinationCard({
   return (
     <article className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
       {/* Image Display Block */}
-      <div className="min-h-[200px] bg-slate-100 grid place-items-center">
+      <div className="min-h-[100px] max-h-44 aspect-square bg-slate-100 w-full">
         {imageUrl && typeof imageUrl === "string" ? (
           // Only render the image if a valid, non-empty string URL is present
           <Image
             src={imageUrl}
             alt={destination.name}
             className="h-full w-full object-cover"
-            width="1024"
-            height="1024"
+            width="256"
+            height="256"
           />
         ) : (
           /* Fallback when no images or invalid path */
@@ -81,14 +81,6 @@ export default function DestinationCard({
           </a>
         </p>
         <div className="grid gap-2 pt-2">
-          <a
-            href={mapUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-sm font-semibold text-emerald-600 hover:text-emerald-700"
-          >
-            Open location in Google Maps
-          </a>
           <a
             href={routeUrl}
             target="_blank"

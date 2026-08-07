@@ -38,7 +38,7 @@ export default function DestinationToolbar({
           />
         </label>
 
-        <label className="flex flex-col gap-2 text-sm text-slate-700">
+        {/* <label className="flex flex-col gap-2 text-sm text-slate-700">
           <span>Start from:</span>
           <div className="flex flex-wrap items-center gap-3">
             <input
@@ -61,7 +61,7 @@ export default function DestinationToolbar({
           <p className="text-sm text-slate-500">
             Routing from: {startingPoint}
           </p>
-        ) : null}
+        ) : null} */}
       </div>
 
       <div className="flex flex-wrap gap-3">
