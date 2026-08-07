@@ -25,5 +25,7 @@ export interface DestinationView {
 
   clusterId: string | null;
 
+  state: string | null;
+
   cluster?: ClusterView | null;
 }

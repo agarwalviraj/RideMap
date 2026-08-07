@@ -32,3 +32,9 @@ body {
 .list-section {
   @apply m-8;
 }
+
+@layer base {
+  button {
+    cursor: pointer;
+  }
+}

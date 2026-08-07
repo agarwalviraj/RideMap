@@ -6,16 +6,20 @@ export default function DestinationToolbar({
   startingPoint,
   onStartChange,
   onSetStart,
-  sortAsc,
-  onToggleSort,
+  searchQuery,
+  onSearchChange,
+  groupMode,
+  onSetGroupMode,
 }: {
   count: number;
   startInput: string;
   startingPoint: string | null;
   onStartChange: (value: string) => void;
   onSetStart: () => void;
-  sortAsc: boolean;
-  onToggleSort: () => void;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  groupMode: "distance" | "state";
+  onSetGroupMode: (value: "distance" | "state") => void;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-6 border-b border-slate-200 pb-6 mb-6">
@@ -23,6 +27,17 @@ export default function DestinationToolbar({
         <p className="text-sm font-semibold text-slate-700">
           {count} destinations loaded
         </p>
+        <label className="flex flex-col gap-2 text-sm text-slate-700">
+          <span>Search destinations</span>
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(event) => onSearchChange(event.target.value)}
+            placeholder="Search by name, place, or state"
+            className="min-w-[260px] rounded-2xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100"
+          />
+        </label>
+
         <label className="flex flex-col gap-2 text-sm text-slate-700">
           <span>Start from:</span>
           <div className="flex flex-wrap items-center gap-3">
@@ -49,13 +64,31 @@ export default function DestinationToolbar({
         ) : null}
       </div>
 
-      <button
-        type="button"
-        className="rounded-full bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-700"
-        onClick={onToggleSort}
-      >
-        Sort by distance: {sortAsc ? "nearest first" : "furthest first"}
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
+            groupMode === "distance"
+              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+          }`}
+          onClick={() => onSetGroupMode("distance")}
+        >
+          Group by distance
+        </button>
+
+        <button
+          type="button"
+          className={`rounded-full px-4 py-3 text-sm font-semibold transition ${
+            groupMode === "state"
+              ? "bg-emerald-600 text-white hover:bg-emerald-700"
+              : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+          }`}
+          onClick={() => onSetGroupMode("state")}
+        >
+          Group by state
+        </button>
+      </div>
     </div>
   );
 }

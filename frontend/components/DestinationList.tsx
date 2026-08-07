@@ -1,53 +1,132 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import DestinationToolbar from "./DestinationToolbar";
 import DestinationGroup from "./DestinationGroup";
 import { distanceGroups, extractPincode } from "./destination-utils";
 import { Destination } from "../types/destination";
+
+type GroupMode = "distance" | "state";
 
 export default function DestinationList({
   destinations,
 }: {
   destinations: Destination[];
 }) {
-  const [sortAsc, setSortAsc] = useState(true);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const [groupMode, setGroupMode] = useState<GroupMode>("distance");
   const [startInput, setStartInput] = useState("");
   const [startingPoint, setStartingPoint] = useState("");
-  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    distanceGroups.reduce((state: Record<string, boolean>, group) => {
-      state[group.key] = group.defaultOpen;
-      return state;
-    }, {}),
+  const [searchQuery, setSearchQuery] = useState(
+    searchParams.get("search") ?? "",
   );
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   const sorted = useMemo(
-    () =>
-      [...destinations].sort((a, b) =>
-        sortAsc ? a.distance_km - b.distance_km : b.distance_km - a.distance_km,
-      ),
-    [destinations, sortAsc],
+    () => [...destinations].sort((a, b) => a.distance_km - b.distance_km),
+    [destinations],
   );
 
-  const groups = useMemo(
-    () =>
-      distanceGroups.map((group) => ({
-        ...group,
-        items: sorted
-          .filter(
-            (destination) =>
-              destination.distance_km >= group.min &&
-              destination.distance_km < group.max,
-          )
-          .sort((a, b) => {
-            const pinA = extractPincode(a.address);
-            const pinB = extractPincode(b.address);
-            if (pinA !== pinB) return pinA - pinB;
-            return a.name.localeCompare(b.name);
-          }),
-      })),
-    [sorted],
-  );
+  useEffect(() => {
+    setSearchQuery(searchParams.get("search") ?? "");
+  }, [searchParams]);
+
+  useEffect(() => {
+    const nextQuery = searchQuery.trim();
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (nextQuery) {
+      params.set("search", nextQuery);
+    } else {
+      params.delete("search");
+    }
+
+    const next = params.toString();
+    const target = next ? `${pathname}?${next}` : pathname;
+    const current = searchParams.toString();
+
+    if (current !== next) {
+      router.replace(target, { scroll: false });
+    }
+  }, [pathname, router, searchParams, searchQuery]);
+
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filtered = useMemo(() => {
+    if (!normalizedQuery) return sorted;
+
+    return sorted.filter((destination) => {
+      const haystack = [
+        destination.name,
+        destination.address,
+        destination.state ?? "",
+        destination.source_name,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return haystack.includes(normalizedQuery);
+    });
+  }, [normalizedQuery, sorted]);
+
+  const groups = useMemo(() => {
+    const sortedFiltered = [...filtered].sort(
+      (a, b) => a.distance_km - b.distance_km,
+    );
+
+    if (normalizedQuery) {
+      return [
+        {
+          key: "search-results",
+          label: "Search results",
+          items: sortedFiltered,
+        },
+      ];
+    }
+
+    if (groupMode === "state") {
+      const buckets = new Map<string, Destination[]>();
+      sortedFiltered.forEach((destination) => {
+        const state = destination.state?.trim() || "Unknown";
+        const list = buckets.get(state) ?? [];
+        list.push(destination);
+        buckets.set(state, list);
+      });
+
+      return Array.from(buckets.entries())
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([state, items]) => ({
+          key: `state-${state}`,
+          label: state,
+          items,
+        }));
+    }
+
+    return distanceGroups.map((group) => ({
+      ...group,
+      items: sortedFiltered.filter(
+        (destination) =>
+          destination.distance_km >= group.min &&
+          destination.distance_km < group.max,
+      ),
+    }));
+  }, [filtered, groupMode, normalizedQuery]);
+
+  useEffect(() => {
+    setOpenGroups((prev) => {
+      const next = { ...prev };
+      groups.forEach((group) => {
+        if (!(group.key in next)) {
+          next[group.key] = false;
+        }
+      });
+      return next;
+    });
+  }, [groups]);
 
   const toggleGroup = (key: string) => {
     setOpenGroups((prev: Record<string, boolean>) => ({
@@ -64,8 +143,10 @@ export default function DestinationList({
         startingPoint={startingPoint}
         onStartChange={setStartInput}
         onSetStart={() => setStartingPoint(startInput.trim())}
-        sortAsc={sortAsc}
-        onToggleSort={() => setSortAsc((prev) => !prev)}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        groupMode={groupMode}
+        onSetGroupMode={setGroupMode}
       />
 
       <div className="space-y-5">

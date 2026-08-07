@@ -6,6 +6,7 @@ export interface Destination {
   source_name: string;
   name: string;
   address: string;
+  state: string | null;
 
   lat: number;
   lng: number;

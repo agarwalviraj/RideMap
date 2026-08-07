@@ -67,23 +67,3 @@ export function extractPincode(address: string | undefined) {
   const match = address.match(/\b(\d{5,6})\b/);
   return match ? Number(match[1]) : Infinity;
 }
-
-export function extractState(address: string | undefined) {
-  if (!address) return "Unknown";
-  const parts = address
-    .split(",")
-    .map((part) => part.trim())
-    .filter(Boolean);
-
-  if (!parts.length) return "Unknown";
-
-  const lastPart = parts[parts.length - 1];
-  const pinMatch = lastPart.match(/(\d{5,6})/);
-  if (pinMatch) {
-    const statePart = lastPart.replace(pinMatch[0], "").trim();
-    if (statePart) return statePart;
-    return parts.length >= 2 ? parts[parts.length - 2] : "Unknown";
-  }
-
-  return parts.length >= 2 ? parts[parts.length - 1] : parts[0];
-}
