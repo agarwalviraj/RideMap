@@ -8,6 +8,14 @@ export default function DestinationToolbar({
   onSetStart,
   sortAsc,
   onToggleSort,
+}: {
+  count: number;
+  startInput: string;
+  startingPoint: string | null;
+  onStartChange: (value: string) => void;
+  onSetStart: () => void;
+  sortAsc: boolean;
+  onToggleSort: () => void;
 }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-6 border-b border-slate-200 pb-6 mb-6">

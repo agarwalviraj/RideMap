@@ -1,3 +1,5 @@
+import { Destination } from "../types/destination";
+
 export const distanceGroups = [
   {
     key: "under75",
@@ -29,22 +31,22 @@ export const distanceGroups = [
   },
 ];
 
-export function buildMapUrl(destination) {
+export function buildMapUrl(destination: Destination) {
   const lat = Number(destination.lat).toFixed(6);
   const lng = Number(destination.lng).toFixed(6);
   const safeName = destination.name
     ? destination.name.replace(/\s+/g, "+").replace(/[^A-Za-z0-9+()\-\._]/g, "")
     : `${lat},${lng}`;
 
-  if (destination.placeId) {
-    const query = `place_id:${encodeURIComponent(destination.placeId)}`;
+  if (destination.place_id) {
+    const query = `place_id:${encodeURIComponent(destination.place_id)}`;
     return `https://www.google.com/maps/place/${safeName}/@${lat},${lng},14z/data=!3m1!4b1?entry=ttu&q=${query}`;
   }
 
   return `https://www.google.com/maps/place/${safeName}/@${lat},${lng},14z/`;
 }
 
-export function buildRouteUrl(destination, origin) {
+export function buildRouteUrl(destination: Destination, origin?: string) {
   const params = new URLSearchParams({ api: "1" });
   const lat = Number(destination.lat).toFixed(6);
   const lng = Number(destination.lng).toFixed(6);
@@ -60,13 +62,13 @@ export function buildRouteUrl(destination, origin) {
   return `https://www.google.com/maps/dir/?${params.toString()}`;
 }
 
-export function extractPincode(address) {
+export function extractPincode(address: string | undefined) {
   if (!address) return Infinity;
   const match = address.match(/\b(\d{5,6})\b/);
   return match ? Number(match[1]) : Infinity;
 }
 
-export function extractState(address) {
+export function extractState(address: string | undefined) {
   if (!address) return "Unknown";
   const parts = address
     .split(",")
