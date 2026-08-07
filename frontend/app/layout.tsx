@@ -1,3 +1,4 @@
+import { PropsWithChildren } from "react";
 import "./globals.css";
 
 export const metadata = {
@@ -6,7 +7,7 @@ export const metadata = {
     "Browse bike ride destinations from Bengaluru with server-rendered React.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children }: PropsWithChildren) {
   return (
     <html lang="en">
       <body>{children}</body>
