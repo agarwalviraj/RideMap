@@ -4,23 +4,27 @@ import { useMemo, useState } from "react";
 import DestinationToolbar from "./DestinationToolbar";
 import DestinationGroup from "./DestinationGroup";
 import { distanceGroups, extractPincode } from "./destination-utils";
+import { Destination } from "../types/destination";
 
-export default function DestinationList({ destinations }) {
+export default function DestinationList({
+  destinations,
+}: {
+  destinations: Destination[];
+}) {
   const [sortAsc, setSortAsc] = useState(true);
   const [startInput, setStartInput] = useState("");
   const [startingPoint, setStartingPoint] = useState("");
-  const [openGroups, setOpenGroups] = useState(
-    () =>
-      distanceGroups.reduce((state, group) => {
-        state[group.key] = group.defaultOpen;
-        return state;
-      }, {}),
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    distanceGroups.reduce((state: Record<string, boolean>, group) => {
+      state[group.key] = group.defaultOpen;
+      return state;
+    }, {}),
   );
 
   const sorted = useMemo(
     () =>
       [...destinations].sort((a, b) =>
-        sortAsc ? a.distanceKm - b.distanceKm : b.distanceKm - a.distanceKm,
+        sortAsc ? a.distance_km - b.distance_km : b.distance_km - a.distance_km,
       ),
     [destinations, sortAsc],
   );
@@ -32,8 +36,8 @@ export default function DestinationList({ destinations }) {
         items: sorted
           .filter(
             (destination) =>
-              destination.distanceKm >= group.min &&
-              destination.distanceKm < group.max,
+              destination.distance_km >= group.min &&
+              destination.distance_km < group.max,
           )
           .sort((a, b) => {
             const pinA = extractPincode(a.address);
@@ -45,8 +49,11 @@ export default function DestinationList({ destinations }) {
     [sorted],
   );
 
-  const toggleGroup = (key) => {
-    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleGroup = (key: string) => {
+    setOpenGroups((prev: Record<string, boolean>) => ({
+      ...prev,
+      [key]: !prev[key],
+    }));
   };
 
   return (

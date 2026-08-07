@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Destination } from "../types/destination";
 
 export default function DestinationCard({
   destination,
@@ -6,6 +7,12 @@ export default function DestinationCard({
   mapUrl,
   routeUrl,
   routeLabel,
+}: {
+  destination: Destination;
+  primaryUrl: string;
+  mapUrl: string;
+  routeUrl: string;
+  routeLabel: string;
 }) {
   const imageUrl = destination?.images?.[0];
 
@@ -16,7 +23,7 @@ export default function DestinationCard({
         {imageUrl && typeof imageUrl === "string" ? (
           // Only render the image if a valid, non-empty string URL is present
           <Image
-            src={"/" + imageUrl}
+            src={imageUrl}
             alt={destination.name}
             className="h-full w-full object-cover"
             width="1024"
@@ -44,8 +51,15 @@ export default function DestinationCard({
           </a>
         </h2>
         <p className="text-sm font-semibold text-emerald-600">
-          {destination.distanceKm} km from Bengaluru
+          {destination.distance_km} km from Bengaluru
         </p>
+        {destination.cluster && destination.cluster?.size > 1 && (
+          <div className="mt-2 inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-700">
+            📍 {destination.cluster?.size} places nearby
+            {destination.cluster &&
+              ` • ${destination.cluster?.name || "Cluster"}`}
+          </div>
+        )}
         <p className="text-sm text-slate-600">
           <a
             href={primaryUrl}

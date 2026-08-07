@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import DestinationCard from "./DestinationCard";
 import { buildMapUrl, buildRouteUrl, extractState } from "./destination-utils";
+import { Destination } from "../types/destination";
 
-const hasStateSubgroups = (groupKey) =>
+const hasStateSubgroups = (groupKey: string) =>
   groupKey === "200to400" || groupKey === "over400";
 
 export default function DestinationGroup({
@@ -10,6 +11,11 @@ export default function DestinationGroup({
   isOpen,
   onToggle,
   startingPoint,
+}: {
+  group: any;
+  isOpen: boolean;
+  onToggle: (key: string) => void;
+  startingPoint: string;
 }) {
   const routeLabel = startingPoint
     ? `Route from ${startingPoint}`
@@ -19,7 +25,7 @@ export default function DestinationGroup({
     if (!hasStateSubgroups(group.key)) return null;
 
     const buckets = new Map();
-    group.items.forEach((destination) => {
+    group.items.forEach((destination: Destination) => {
       const state = extractState(destination.address);
       const list = buckets.get(state) ?? [];
       list.push(destination);
@@ -31,12 +37,14 @@ export default function DestinationGroup({
       .map(([state, items]) => ({ state, items }));
   }, [group.items, group.key]);
 
-  const [openStateGroups, setOpenStateGroups] = useState({});
+  const [openStateGroups, setOpenStateGroups] = useState<
+    Record<string, boolean>
+  >({});
 
   useEffect(() => {
     if (!stateGroups) return;
-    setOpenStateGroups((prev) => {
-      const next = {};
+    setOpenStateGroups((prev: Record<string, boolean>) => {
+      const next: Record<string, boolean> = {};
       stateGroups.forEach(({ state }) => {
         next[state] = prev[state] ?? false;
       });
@@ -44,26 +52,41 @@ export default function DestinationGroup({
     });
   }, [stateGroups]);
 
-  const renderCards = (destinations) => (
-    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      {destinations.map((destination) => {
-        const mapUrl = buildMapUrl(destination);
-        const routeUrl = buildRouteUrl(destination, startingPoint);
-        const primaryUrl = startingPoint ? routeUrl : mapUrl;
+  const renderCards = (destinations: Destination[]) => {
+    const unique = [];
 
-        return (
-          <DestinationCard
-            key={destination.id}
-            destination={destination}
-            mapUrl={mapUrl}
-            routeUrl={routeUrl}
-            primaryUrl={primaryUrl}
-            routeLabel={routeLabel}
-          />
-        );
-      })}
-    </div>
-  );
+    const seen = new Set();
+
+    for (const destination of destinations) {
+      const key = destination.cluster_id || destination.id;
+
+      if (!seen.has(key)) {
+        seen.add(key);
+        unique.push(destination);
+      }
+    }
+
+    return (
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {unique.map((destination) => {
+          const mapUrl = buildMapUrl(destination);
+          const routeUrl = buildRouteUrl(destination, startingPoint);
+          const primaryUrl = startingPoint ? routeUrl : mapUrl;
+
+          return (
+            <DestinationCard
+              key={destination.cluster_id || destination.id}
+              destination={destination}
+              mapUrl={mapUrl}
+              routeUrl={routeUrl}
+              primaryUrl={primaryUrl}
+              routeLabel={routeLabel}
+            />
+          );
+        })}
+      </div>
+    );
+  };
 
   return (
     <section className="overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-sm">
@@ -97,7 +120,7 @@ export default function DestinationGroup({
                   type="button"
                   className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left text-sm font-medium text-slate-900 transition hover:bg-slate-100"
                   onClick={() =>
-                    setOpenStateGroups((prev) => ({
+                    setOpenStateGroups((prev: Record<string, boolean>) => ({
                       ...prev,
                       [stateGroup.state]: !prev[stateGroup.state],
                     }))

@@ -11,11 +11,14 @@
     "enrich": "node scripts/enrich-locations.js",
     "frontend:dev": "npm --prefix frontend run dev",
     "frontend:build": "npm --prefix frontend run build",
-    "frontend:start": "npm --prefix frontend run start"
+    "frontend:start": "npm --prefix frontend run start",
+    "import": "node scripts/import-supabase.js"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.2",
     "csv-parser": "^3.0.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.6.1",
+    "ws": "^8.21.2"
   },
   "engines": {
     "node": ">=18"
